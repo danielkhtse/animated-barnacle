@@ -6,13 +6,16 @@ import { OrganizationSwitcher } from "@/components/OrganizationSwitcher";
 import { usePathname } from "next/navigation";
 import { navigationItems } from "@/components/Navigation";
 
-const getPageTitle = () => {
-	const pathname = usePathname();
-	const matchedItem = navigationItems.find((item) => item.href === pathname);
-	return matchedItem?.label || "Dashboard";
-};
-
 export function Header() {
+	const pathname = usePathname();
+
+	const getPageTitle = () => {
+		const matchedItem = navigationItems.find(
+			(item) => item.href === pathname
+		);
+		return matchedItem?.label || "Dashboard";
+	};
+
 	return (
 		<header className="h-16 border-b bg-white px-6 flex items-center justify-between">
 			{/* Left side - Page Title */}

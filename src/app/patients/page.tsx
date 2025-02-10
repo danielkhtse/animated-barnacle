@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -119,7 +119,10 @@ export default function PatientManagementPage() {
 		patientId: queryPatientId ?? "",
 	});
 
-	const { data, isLoading, isError } = useSample(currentOrgId, queryParams);
+	const { data, isLoading, isError } = useSample(
+		currentOrgId ?? "",
+		queryParams
+	);
 	const table = useReactTable({
 		data: data?.data || [],
 		columns: getColumns(data?.data || []),

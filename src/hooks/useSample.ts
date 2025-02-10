@@ -27,6 +27,13 @@ const fetchSamples = async (
 	orgId: string,
 	params?: SampleQueryParams
 ): Promise<SampleResponse> => {
+	if (!orgId) {
+		return {
+			meta: { total: 0 },
+			data: [],
+		};
+	}
+
 	const searchParams = new URLSearchParams();
 
 	if (params?.page?.offset !== undefined) {

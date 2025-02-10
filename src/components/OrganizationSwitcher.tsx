@@ -20,7 +20,10 @@ export function OrganizationSwitcher() {
 	const handleOrgChange = (orgId: string) => {
 		const selectedOrg = organizations.find((org) => org.id === orgId);
 		if (selectedOrg) {
-			setCurrentOrg(selectedOrg);
+			setCurrentOrg({
+				id: selectedOrg.id,
+				name: selectedOrg.attributes.name,
+			});
 		}
 	};
 
