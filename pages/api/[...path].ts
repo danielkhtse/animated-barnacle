@@ -11,7 +11,6 @@ export default async function handler(
 				? req.query.path.join("/")
 				: req.query.path
 		}`;
-		console.log("handler", req.query.path, endpoint);
 
 		// Forward the request method, body, and headers
 		const response = await fetchFromAPI(endpoint, {
