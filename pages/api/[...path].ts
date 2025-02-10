@@ -6,15 +6,25 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	try {
-		const endpoint = `/${
-			Array.isArray(req.query.path)
-				? req.query.path.join("/")
-				: req.query.path
+		const { path, ...searchParams } = req.query;
+		const endpoint = `/${Array.isArray(path) ? path.join("/") : path}`;
+
+		// Build query string from remaining search params
+		const queryString = new URLSearchParams();
+		Object.entries(searchParams).forEach(([key, value]) => {
+			if (Array.isArray(value)) {
+				value.forEach((v) => queryString.append(key, v));
+			} else if (value) {
+				queryString.append(key, value.toString());
+			}
+		});
+
+		const fullEndpoint = `${endpoint}${
+			queryString.toString() ? `?${queryString.toString()}` : ""
 		}`;
-		console.log("handler", req.query.path, endpoint);
 
 		// Forward the request method, body, and headers
-		const response = await fetchFromAPI(endpoint, {
+		const response = await fetchFromAPI(fullEndpoint, {
 			method: req.method,
 			body: req.method !== "GET" ? JSON.stringify(req.body) : undefined,
 			headers: req.headers as HeadersInit,
