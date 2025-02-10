@@ -64,8 +64,6 @@ const fetchSamples = async (
 		searchParams.toString() ? `?${searchParams.toString()}` : ""
 	}`;
 
-	console.log("fetchSamples url", url);
-
 	const response = await fetch(url);
 	if (!response.ok) {
 		throw new Error("Failed to fetch samples");
