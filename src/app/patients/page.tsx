@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -57,7 +57,7 @@ const columns = [
 	}),
 ];
 
-const PAGE_SIZE = 15;
+const DEFAULT_PAGE_SIZE = 15;
 
 export default function PatientManagementPage() {
 	const { id: currentOrgId } = useCurrentOrg();
@@ -67,20 +67,25 @@ export default function PatientManagementPage() {
 	const pageOffset = searchParams?.get("page[offset]") ?? null;
 	const pageLimit = searchParams?.get("page[limit]") ?? null;
 	const queryPatientName = searchParams?.get("patientName") ?? null;
-	const querySampleId = searchParams?.get("sampleId") ?? null;
-	const queryActivateTime = searchParams?.get("activateTime") ?? null;
-	const queryResultTime = searchParams?.get("resultTime") ?? null;
+	const querySampleBarcode = searchParams?.get("sampleBarcode") ?? null;
+	const queryActivationDate = searchParams?.get("activationDate") ?? null;
+	const queryResultDate = searchParams?.get("resultDate") ?? null;
 	const queryResultValue = searchParams?.get("resultValue") ?? null;
+	const queryResultType = searchParams?.get("resultType") ?? null;
+	const queryPatientId = searchParams?.get("patientId") ?? null;
+
 	const [queryParams, setQueryParams] = useState<SampleQueryParams>({
 		page: {
 			offset: pageOffset ? parseInt(pageOffset) : 0,
-			limit: pageLimit ? parseInt(pageLimit) : PAGE_SIZE,
+			limit: pageLimit ? parseInt(pageLimit) : DEFAULT_PAGE_SIZE,
 		},
 		patientName: queryPatientName ?? "",
-		sampleId: querySampleId ?? "",
-		activateTime: queryActivateTime ?? "",
-		resultTime: queryResultTime ?? "",
+		sampleBarcode: querySampleBarcode ?? "",
+		activationDate: queryActivationDate ?? "",
+		resultDate: queryResultDate ?? "",
 		resultValue: queryResultValue ?? "",
+		resultType: queryResultType ?? "",
+		patientId: queryPatientId ?? "",
 	});
 
 	const { data, isLoading, isError } = useSample(currentOrgId, queryParams);
@@ -89,13 +94,13 @@ export default function PatientManagementPage() {
 		columns,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
-		pageCount: Math.ceil((data?.meta?.total || 0) / PAGE_SIZE),
+		pageCount: Math.ceil((data?.meta?.total || 0) / DEFAULT_PAGE_SIZE),
 		state: {
 			pagination: {
-				pageSize: queryParams.page?.limit || PAGE_SIZE,
+				pageSize: queryParams.page?.limit || DEFAULT_PAGE_SIZE,
 				pageIndex:
 					(queryParams.page?.offset || 0) /
-					(queryParams.page?.limit || PAGE_SIZE),
+					(queryParams.page?.limit || DEFAULT_PAGE_SIZE),
 			},
 		},
 		manualPagination: true,
@@ -114,27 +119,32 @@ export default function PatientManagementPage() {
 			},
 		};
 
-		urlParams.append(
-			"page[offset]",
-			paramsWithOffset.page.offset.toString()
-		);
-		urlParams.append(
-			"page[limit]",
-			(paramsWithOffset.page?.limit || PAGE_SIZE).toString()
-		);
+		if (paramsWithOffset.page.offset !== 0) {
+			urlParams.append(
+				"page[offset]",
+				paramsWithOffset.page.offset.toString()
+			);
+		}
 
-		// Only append non-empty search params
+		if (paramsWithOffset.page?.limit !== DEFAULT_PAGE_SIZE) {
+			urlParams.append(
+				"page[limit]",
+				(paramsWithOffset.page?.limit || DEFAULT_PAGE_SIZE).toString()
+			);
+		}
+
 		if (paramsWithOffset.patientName) {
 			urlParams.append("patientName", paramsWithOffset.patientName);
 		}
-		if (paramsWithOffset.sampleId) {
-			urlParams.append("sampleId", paramsWithOffset.sampleId);
+
+		if (paramsWithOffset.sampleBarcode) {
+			urlParams.append("sampleBarcode", paramsWithOffset.sampleBarcode);
 		}
-		if (paramsWithOffset.activateTime) {
-			urlParams.append("activateTime", paramsWithOffset.activateTime);
+		if (paramsWithOffset.activationDate) {
+			urlParams.append("activationDate", paramsWithOffset.activationDate);
 		}
-		if (paramsWithOffset.resultTime) {
-			urlParams.append("resultTime", paramsWithOffset.resultTime);
+		if (paramsWithOffset.resultDate) {
+			urlParams.append("resultDate", paramsWithOffset.resultDate);
 		}
 
 		return `/patients?${urlParams.toString()}`;
@@ -145,13 +155,17 @@ export default function PatientManagementPage() {
 			case "patientName":
 				return queryParams.patientName || "";
 			case "sampleBarcode":
-				return queryParams.sampleId || "";
+				return queryParams.sampleBarcode || "";
 			case "activationDate":
-				return queryParams.activateTime || "";
+				return queryParams.activationDate || "";
 			case "resultDate":
-				return queryParams.resultTime || "";
+				return queryParams.resultDate || "";
 			case "resultValue":
 				return queryParams.resultValue || "";
+			case "resultType":
+				return queryParams.resultType || "";
+			case "patientId":
+				return queryParams.patientId || "";
 			default:
 				return "";
 		}
@@ -161,62 +175,68 @@ export default function PatientManagementPage() {
 		e: React.KeyboardEvent<HTMLInputElement>,
 		headerId: string
 	) => {
-		console.log(e);
-		console.log(headerId);
 		if (e.key === "Enter") {
-			setQueryParams({
+			const newQueryParams = {
 				...queryParams,
 				[headerId]: (e.target as HTMLInputElement).value,
 				page: {
 					...queryParams.page,
 					offset: 0, // Reset to first page when searching
 				},
-			});
+			};
+			setQueryParams(newQueryParams);
 
-			router.push(buildUrl(queryParams, 0));
+			router.push(buildUrl(newQueryParams, 0));
 		}
 	};
 
 	const handlePreviousPage = () => {
 		const prevOffset = Math.max(
 			(queryParams.page?.offset || 0) -
-				(queryParams.page?.limit || PAGE_SIZE),
+				(queryParams.page?.limit || DEFAULT_PAGE_SIZE),
 			0
 		);
-		setQueryParams({
+		const newQueryParams = {
 			...queryParams,
 			page: {
 				...queryParams.page,
 				offset: prevOffset,
 			},
-		});
-		router.push(buildUrl(queryParams, prevOffset));
+		};
+		setQueryParams(newQueryParams);
+		router.push(buildUrl(newQueryParams, prevOffset));
 	};
 
 	const handleNextPage = () => {
 		const nextOffset =
 			(queryParams.page?.offset || 0) +
-			(queryParams.page?.limit || PAGE_SIZE);
-		setQueryParams({
+			(queryParams.page?.limit || DEFAULT_PAGE_SIZE);
+		const newQueryParams = {
 			...queryParams,
 			page: {
 				...queryParams.page,
 				offset: nextOffset,
 			},
-		});
-		router.push(buildUrl(queryParams, nextOffset));
+		};
+		setQueryParams(newQueryParams);
+		router.push(buildUrl(newQueryParams, nextOffset));
 	};
 
 	const handleClear = (headerId: string) => {
-		setQueryParams({
+		const input = document.getElementById(headerId) as HTMLInputElement;
+		if (input) {
+			input.value = "";
+		}
+		const newQueryParams = {
 			...queryParams,
 			[headerId]: "",
 			page: {
 				...queryParams.page,
-				offset: 0, // Reset to first page when clearing
+				offset: 0,
 			},
-		});
-		router.push(buildUrl({ ...queryParams, [headerId]: "" }, 0));
+		};
+		setQueryParams(newQueryParams);
+		router.push(buildUrl(newQueryParams, 0));
 	};
 
 	return (
@@ -242,6 +262,7 @@ export default function PatientManagementPage() {
 											<div className="relative">
 												<input
 													type="text"
+													id={header.id}
 													name={
 														header.column.columnDef
 															.header as keyof SampleQueryParams

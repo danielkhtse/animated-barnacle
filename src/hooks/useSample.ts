@@ -14,11 +14,13 @@ export type SampleQueryParams = {
 		offset?: number;
 		limit?: number;
 	};
-	sampleId?: string;
+	sampleBarcode?: string;
 	patientName?: string;
-	activateTime?: string;
-	resultTime?: string;
+	activationDate?: string;
+	resultDate?: string;
 	resultValue?: string;
+	resultType?: string;
+	patientId?: string;
 };
 
 const fetchSamples = async (
@@ -33,20 +35,27 @@ const fetchSamples = async (
 	if (params?.page?.limit !== undefined) {
 		searchParams.set("page[limit]", params.page.limit.toString());
 	}
-	if (params?.sampleId) {
-		searchParams.set("sampleId", params.sampleId);
+	if (params?.sampleBarcode) {
+		searchParams.set("sampleBarcode", params.sampleBarcode);
 	}
 	if (params?.patientName) {
 		searchParams.set("patientName", params.patientName);
 	}
-	if (params?.activateTime) {
-		searchParams.set("activateTime", params.activateTime);
+	if (params?.activationDate) {
+		searchParams.set("activationDate", params.activationDate);
 	}
-	if (params?.resultTime) {
-		searchParams.set("resultTime", params.resultTime);
+	if (params?.resultDate) {
+		searchParams.set("resultDate", params.resultDate);
 	}
 	if (params?.resultValue) {
 		searchParams.set("resultValue", params.resultValue);
+	}
+
+	if (params?.resultType) {
+		searchParams.set("resultType", params.resultType);
+	}
+	if (params?.patientId) {
+		searchParams.set("patientId", params.patientId);
 	}
 
 	const url = `${
