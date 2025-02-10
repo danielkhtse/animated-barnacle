@@ -6,8 +6,12 @@ export default async function handler(
 	res: NextApiResponse
 ) {
 	try {
-		const path = req.query.path as string[];
-		const endpoint = `/${path.join("/")}`;
+		const endpoint = `/${
+			Array.isArray(req.query.path)
+				? req.query.path.join("/")
+				: req.query.path
+		}`;
+		console.log("handler", req.query.path, endpoint);
 
 		// Forward the request method, body, and headers
 		const response = await fetchFromAPI(endpoint, {
@@ -16,9 +20,16 @@ export default async function handler(
 			headers: req.headers as HeadersInit,
 		});
 
-		res.status(200).json(response);
-	} catch (error) {
+		if (!response) {
+			return res.status(404).json({ error: "Not Found" });
+		}
+
+		return res.status(200).json(response);
+	} catch (error: any) {
 		console.error("API Proxy Error:", error);
-		res.status(500).json({ error: "Internal Server Error" });
+		const statusCode = error.status || error.statusCode || 500;
+		return res
+			.status(statusCode)
+			.json({ error: error.message || "Internal Server Error" });
 	}
 }

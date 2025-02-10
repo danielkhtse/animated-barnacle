@@ -8,15 +8,27 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useOrganization } from "@/hooks/useOrganization";
 
 export function OrganizationSwitcher() {
-	const organizations = [
-		{ id: "org1", name: "Acme Corp" },
-		{ id: "org2", name: "Globex Corporation" },
-	];
+	const { data } = useOrganization();
+	const organizations =
+		data?.data.map((org) => ({
+			id: org.id,
+			name: org.attributes.name,
+		})) ?? [];
+
+	const handleOrgChange = (orgId: string) => {
+		const selectedOrg = organizations.find((org) => org.id === orgId);
+		if (selectedOrg) {
+			localStorage.setItem("selectedOrg", JSON.stringify(selectedOrg));
+			// Refresh the page to apply the new organization context
+			window.location.reload();
+		}
+	};
 
 	return (
-		<Select defaultValue="org1">
+		<Select onValueChange={handleOrgChange}>
 			<SelectTrigger className="min-w-content">
 				<div className="flex items-center gap-2 text-foreground">
 					<Building className="size-5 text-gray-600" />
