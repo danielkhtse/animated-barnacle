@@ -31,7 +31,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 const columnHelper = createColumnHelper<Sample>();
 
-const columns = [
+const getColumns = (data: Sample[]) => [
 	columnHelper.accessor((row) => row.patientName, {
 		id: "patientName",
 		header: "Patient Name",
@@ -55,6 +55,37 @@ const columns = [
 		id: "resultValue",
 		header: "Result Value",
 	}),
+	...(data.some((row) => row.patientId)
+		? [
+				columnHelper.accessor((row) => row.patientId, {
+					id: "patientId",
+					header: "Patient ID",
+					cell: (info) => info.getValue() || "N/A",
+				}),
+		  ]
+		: []),
+	...(data.some((row) => row.resultType)
+		? [
+				columnHelper.accessor((row) => row.resultType, {
+					id: "resultType",
+					header: "Result Type",
+					cell: (info) => {
+						const value = info.getValue()?.toLowerCase();
+						if (!value) return "N/A";
+						switch (value) {
+							case "rt-pcr":
+								return "RT-PCR";
+							case "antigen":
+								return "Antigen";
+							case "antibody":
+								return "Antibody";
+							default:
+								return "N/A";
+						}
+					},
+				}),
+		  ]
+		: []),
 ];
 
 const DEFAULT_PAGE_SIZE = 15;
@@ -91,7 +122,7 @@ export default function PatientManagementPage() {
 	const { data, isLoading, isError } = useSample(currentOrgId, queryParams);
 	const table = useReactTable({
 		data: data?.data || [],
-		columns,
+		columns: getColumns(data?.data || []),
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		pageCount: Math.ceil((data?.meta?.total || 0) / DEFAULT_PAGE_SIZE),
