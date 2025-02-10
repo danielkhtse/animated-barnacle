@@ -6,6 +6,8 @@ export async function fetchFromAPI(
 ) {
 	const url = `${API_BASE_URL}${endpoint}`;
 
+	console.log("fetchFromAPI", url);
+
 	const defaultHeaders = {
 		"Content-Type": "application/json",
 	};
