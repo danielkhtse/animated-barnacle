@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navigation } from "@/components/Navigation";
 import { Header } from "@/components/Header";
 import { Providers } from "@/components/Providers";
+import { Suspense } from "react";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -31,16 +32,18 @@ export default function RootLayout({
 			<body
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
 				<Providers>
-					<div className="flex min-h-screen">
-						<Navigation />
+					<Suspense fallback={<div>Loading...</div>}>
+						<div className="flex min-h-screen">
+							<Navigation />
 
-						<div className="flex-1 flex flex-col">
-							<Header />
-							<main className="flex-1 p-4 overflow-auto">
-								{children}
-							</main>
+							<div className="flex-1 flex flex-col">
+								<Header />
+								<main className="flex-1 p-4 overflow-auto">
+									{children}
+								</main>
+							</div>
 						</div>
-					</div>
+					</Suspense>
 				</Providers>
 			</body>
 		</html>

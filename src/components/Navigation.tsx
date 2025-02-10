@@ -15,6 +15,7 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 } from "@/components/ui/navigation-menu";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -64,7 +65,7 @@ export function Navigation() {
 		<nav className="min-w-content bg-[var(--nav-bg)] text-[var(--nav-foreground)] transition-all duration-300">
 			<div className="p-4 mb-6 flex items-center justify-between">
 				{isCollapsed ? (
-					<img
+					<Image
 						src="/prenetics-Logo-initial.png"
 						alt="Prenetics Logo"
 						className="w-6"
@@ -72,7 +73,7 @@ export function Navigation() {
 						height={24}
 					/>
 				) : (
-					<img
+					<Image
 						src="/prenetics-Logo.svg"
 						alt="Prenetics Logo"
 						className="w-32"

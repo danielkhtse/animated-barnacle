@@ -35,7 +35,10 @@ export default async function handler(
 		}
 
 		return res.status(200).json(response);
-	} catch (error: any) {
+	} catch (
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		error: any
+	) {
 		console.error("API Proxy Error:", error);
 		const statusCode = error.status || error.statusCode || 500;
 		return res
