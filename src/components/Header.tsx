@@ -21,11 +21,9 @@ export function Header() {
 			</h1>
 
 			{/* Right side - Switchers */}
-			<div className="flex items-center space-x-4">
+			<div className="flex items-center gap-2">
 				{/* Organization Switcher */}
-				<div className="flex items-center space-x-2 px-3 py-2 rounded-md cursor-pointer">
-					<OrganizationSwitcher />
-				</div>
+				<OrganizationSwitcher />
 
 				{/* Language Switcher */}
 				<div className="flex items-center space-x-2 px-3 py-2 rounded-md cursor-pointer">

@@ -1,33 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-
-interface Profile {
-	type: "profile";
-	id: string;
-	attributes: {
-		name: string;
-	};
-}
-
-interface Sample {
-	id: string;
-	type: "sample";
-	attributes: {
-		result: string;
-		sampleId: string;
-		resultType: "rtpcr" | "antigen" | "antibody";
-		activateTime: string;
-		resultTime: string;
-	};
-	relationships: {
-		profile: {
-			data: {
-				type: "profile";
-				id: string;
-			};
-		};
-	};
-}
-
+import { Sample } from "@/types/sample";
+import { Profile } from "@/types/profile";
 interface SampleResponse {
 	meta: {
 		total: number;
@@ -37,7 +10,9 @@ interface SampleResponse {
 }
 
 const fetchSamples = async (orgId: string): Promise<SampleResponse> => {
-	const response = await fetch(`/v1.0/org/${orgId}/sample`);
+	const response = await fetch(
+		`${process.env.NEXT_PUBLIC_APP_BASE_URL}/api/v1.0/org/${orgId}/sample`
+	);
 	if (!response.ok) {
 		throw new Error("Failed to fetch samples");
 	}

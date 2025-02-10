@@ -9,39 +9,38 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { useOrganization } from "@/hooks/useOrganization";
+import { useCurrentOrg } from "@/hooks/useCurrentOrg";
 
 export function OrganizationSwitcher() {
 	const { data } = useOrganization();
-	const organizations =
-		data?.data.map((org) => ({
-			id: org.id,
-			name: org.attributes.name,
-		})) ?? [];
+	const organizations = data?.data ?? [];
+
+	console.log(organizations);
+
+	const { id: selectedOrgId, setCurrentOrg } = useCurrentOrg();
 
 	const handleOrgChange = (orgId: string) => {
 		const selectedOrg = organizations.find((org) => org.id === orgId);
 		if (selectedOrg) {
-			localStorage.setItem("selectedOrg", JSON.stringify(selectedOrg));
-			// Refresh the page to apply the new organization context
-			window.location.reload();
+			setCurrentOrg(selectedOrg);
 		}
 	};
 
 	return (
-		<Select onValueChange={handleOrgChange}>
+		<Select onValueChange={handleOrgChange} value={selectedOrgId}>
 			<SelectTrigger className="min-w-content">
 				<div className="flex items-center gap-2 text-foreground">
 					<Building className="size-5 text-gray-600" />
 					<SelectValue placeholder="Select organization" />
 				</div>
 			</SelectTrigger>
-			<SelectContent className="relative z-50 text-foreground ">
+			<SelectContent className="relative z-50 text-foreground">
 				{organizations.map((org) => (
 					<SelectItem
 						key={org.id}
 						value={org.id}
 						className="cursor-pointer">
-						{org.name}
+						{org.attributes.name}
 					</SelectItem>
 				))}
 			</SelectContent>
