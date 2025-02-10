@@ -18,6 +18,7 @@ export type SampleQueryParams = {
 	patientName?: string;
 	activateTime?: string;
 	resultTime?: string;
+	resultValue?: string;
 };
 
 const fetchSamples = async (
@@ -25,11 +26,6 @@ const fetchSamples = async (
 	params?: SampleQueryParams
 ): Promise<SampleResponse> => {
 	const searchParams = new URLSearchParams();
-
-	console.log("fetchSamples", params);
-	console.log("page:", params?.page);
-	console.log("page offset:", params?.page?.offset);
-	console.log("page limit:", params?.page?.limit);
 
 	if (params?.page?.offset !== undefined) {
 		searchParams.set("page[offset]", params.page.offset.toString());
@@ -49,8 +45,9 @@ const fetchSamples = async (
 	if (params?.resultTime) {
 		searchParams.set("resultTime", params.resultTime);
 	}
-
-	console.log("searchParams", searchParams.toString());
+	if (params?.resultValue) {
+		searchParams.set("resultValue", params.resultValue);
+	}
 
 	const url = `${
 		process.env.NEXT_PUBLIC_APP_BASE_URL
@@ -65,50 +62,6 @@ const fetchSamples = async (
 		throw new Error("Failed to fetch samples");
 	}
 
-	// Return mock data for development
-	// const mockData: SampleResponse = {
-	// 	meta: { total: 10000 },
-	// 	data: Array.from({ length: 15 }, (_, i) => ({
-	// 		id: `sample-${i}`,
-	// 		type: "sample",
-	// 		attributes: {
-	// 			sampleId: `SAMPLE${String(i).padStart(5, "0")}`,
-	// 			activateTime: new Date(
-	// 				2024 - Math.floor(Math.random() * 2),
-	// 				Math.floor(Math.random() * 12),
-	// 				Math.floor(Math.random() * 28)
-	// 			).toISOString(),
-	// 			resultTime: new Date(
-	// 				2024 - Math.floor(Math.random() * 2),
-	// 				Math.floor(Math.random() * 12),
-	// 				Math.floor(Math.random() * 28)
-	// 			).toISOString(),
-	// 			result: Math.random() > 0.5 ? "Positive" : "Negative",
-	// 		},
-	// 		relationships: {
-	// 			profile: {
-	// 				data: {
-	// 					id: `profile-${i}`,
-	// 					type: "profile",
-	// 				},
-	// 			},
-	// 		},
-	// 	})),
-	// 	included: Array.from({ length: 15 }, (_, i) => ({
-	// 		id: `profile-${i}`,
-	// 		type: "profile",
-	// 		attributes: {
-	// 			name: `Patient ${i}`,
-	// 			dateOfBirth: new Date(
-	// 				1950 + Math.floor(Math.random() * 50),
-	// 				Math.floor(Math.random() * 12),
-	// 				Math.floor(Math.random() * 28)
-	// 			).toISOString(),
-	// 		},
-	// 	})),
-	// };
-
-	// return Promise.resolve(mockData);
 	return response.json();
 };
 
