@@ -1,5 +1,3 @@
-import { Profile } from "@/types/profile";
-
 export interface Sample {
 	id: string;
 	type: string;
@@ -8,4 +6,6 @@ export interface Sample {
 	activationDate: string;
 	resultDate: string;
 	resultValue: string;
+	resultType?: string;
+	patientId?: string;
 }

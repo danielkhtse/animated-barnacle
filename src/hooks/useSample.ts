@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 import { Sample } from "@/types/sample";
-// import { Profile } from "@/types/profile";
 
 interface SampleResponse {
 	meta: {
@@ -19,6 +18,8 @@ export type SampleQueryParams = {
 	activateTime?: string;
 	resultTime?: string;
 	resultValue?: string;
+	resultType?: string;
+	patientId?: string;
 };
 
 const fetchSamples = async (
@@ -48,14 +49,17 @@ const fetchSamples = async (
 	if (params?.resultValue) {
 		searchParams.set("resultValue", params.resultValue);
 	}
-
+	if (params?.resultType) {
+		searchParams.set("resultType", params.resultType);
+	}
+	if (params?.patientId) {
+		searchParams.set("patientId", params.patientId);
+	}
 	const url = `${
 		process.env.NEXT_PUBLIC_APP_BASE_URL
 	}/api/v1.0/org/${orgId}/sample${
 		searchParams.toString() ? `?${searchParams.toString()}` : ""
 	}`;
-
-	console.log("fetchSamples url", url);
 
 	const response = await fetch(url);
 	if (!response.ok) {
