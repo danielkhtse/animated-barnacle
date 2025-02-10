@@ -162,7 +162,7 @@ export default function PatientManagementPage() {
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<React.Fragment key={headerGroup.id}>
-								<TableRow className="bg-[var(--primary)] text-white">
+								<TableRow className="bg-[var(--primary)] text-white hover:bg-[var(--primary)]/50 data-[state=selected]:bg-[var(--primary)]">
 									{headerGroup.headers.map((header) => (
 										<TableHead key={header.id}>
 											{flexRender(
