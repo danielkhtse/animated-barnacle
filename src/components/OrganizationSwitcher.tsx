@@ -15,8 +15,6 @@ export function OrganizationSwitcher() {
 	const { data } = useOrganization();
 	const organizations = data?.data ?? [];
 
-	console.log(organizations);
-
 	const { id: selectedOrgId, setCurrentOrg } = useCurrentOrg();
 
 	const handleOrgChange = (orgId: string) => {
