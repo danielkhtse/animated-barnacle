@@ -20,6 +20,24 @@ import { cn } from "@/lib/utils";
 
 const ActiveLinkStyles = "min-w-full bg-[var(--active-link)] font-bold";
 
+export const navigationItems = [
+	{
+		href: "/patients",
+		icon: <Users className="size-6" />,
+		label: "Patient Management",
+	},
+	{
+		href: "/results",
+		icon: <FileText className="size-6" />,
+		label: "Result Upload",
+	},
+	{
+		href: "/kits",
+		icon: <KeyRound className="size-6" />,
+		label: "Kit Activation",
+	},
+];
+
 export function Navigation() {
 	const [isCollapsed, setIsCollapsed] = useState(() => true);
 	const pathname = usePathname();
@@ -74,41 +92,20 @@ export function Navigation() {
 			</div>
 			<NavigationMenu isCollapsed={isCollapsed}>
 				<NavigationMenuList className="flex flex-col gap-2">
-					<NavigationMenuItem
-						className={cn(
-							pathname === "/patients" && ActiveLinkStyles
-						)}>
-						<NavigationMenuLink href="/patients">
-							<span className={cn("flex items-center gap-2")}>
-								<Users className="size-6" />
-								{!isCollapsed && (
-									<span>Patient Management</span>
-								)}
-							</span>
-						</NavigationMenuLink>
-					</NavigationMenuItem>
-					<NavigationMenuItem
-						className={cn(
-							pathname === "/results" && ActiveLinkStyles
-						)}>
-						<NavigationMenuLink href="/results">
-							<span className={cn("flex items-center gap-2")}>
-								<FileText className="size-6" />
-								{!isCollapsed && <span>Result Upload</span>}
-							</span>
-						</NavigationMenuLink>
-					</NavigationMenuItem>
-					<NavigationMenuItem
-						className={cn(
-							pathname === "/kits" && ActiveLinkStyles
-						)}>
-						<NavigationMenuLink href="/kits">
-							<span className={cn("flex items-center gap-2")}>
-								<KeyRound className="size-6" />
-								{!isCollapsed && <span>Kit Activation</span>}
-							</span>
-						</NavigationMenuLink>
-					</NavigationMenuItem>
+					{navigationItems.map((item) => (
+						<NavigationMenuItem
+							key={item.href}
+							className={cn(
+								pathname === item.href && ActiveLinkStyles
+							)}>
+							<NavigationMenuLink href={item.href}>
+								<span className={cn("flex items-center gap-2")}>
+									{item.icon}
+									{!isCollapsed && <span>{item.label}</span>}
+								</span>
+							</NavigationMenuLink>
+						</NavigationMenuItem>
+					))}
 				</NavigationMenuList>
 			</NavigationMenu>
 		</nav>
