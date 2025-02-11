@@ -28,7 +28,6 @@ import { format } from "date-fns";
 import { Sample } from "@/types/sample";
 import { useCurrentOrg } from "@/hooks/useCurrentOrg";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Organization } from "@/types/organization";
 
 const columnHelper = createColumnHelper<Sample>();
 
@@ -133,7 +132,7 @@ export default function PatientManagementPage() {
 	);
 	const table = useReactTable({
 		data: data?.data || [],
-		columns: getColumns(data?.data || [], currentOrgName),
+		columns: getColumns(data?.data || [], currentOrgName ?? ""),
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		pageCount: Math.ceil((data?.meta?.total || 0) / DEFAULT_PAGE_SIZE),
