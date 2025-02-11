@@ -28,10 +28,18 @@ import { format } from "date-fns";
 import { Sample } from "@/types/sample";
 import { useCurrentOrg } from "@/hooks/useCurrentOrg";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Organization } from "@/types/organization";
 
 const columnHelper = createColumnHelper<Sample>();
 
-const getColumns = (data: Sample[]) => [
+const isShowingAdditionalColumns = (currentOrgName: string | undefined) => {
+	if (currentOrgName?.toLowerCase() === "circle") {
+		return true;
+	}
+	return false;
+};
+
+const getColumns = (data: Sample[], currentOrgName: string) => [
 	columnHelper.accessor((row) => row.patientName, {
 		id: "patientName",
 		header: "Patient Name",
@@ -55,7 +63,7 @@ const getColumns = (data: Sample[]) => [
 		id: "resultValue",
 		header: "Result Value",
 	}),
-	...(data.some((row) => row.patientId)
+	...(isShowingAdditionalColumns(currentOrgName)
 		? [
 				columnHelper.accessor((row) => row.patientId, {
 					id: "patientId",
@@ -64,7 +72,7 @@ const getColumns = (data: Sample[]) => [
 				}),
 		  ]
 		: []),
-	...(data.some((row) => row.resultType)
+	...(isShowingAdditionalColumns(currentOrgName)
 		? [
 				columnHelper.accessor((row) => row.resultType, {
 					id: "resultType",
@@ -91,7 +99,7 @@ const getColumns = (data: Sample[]) => [
 const DEFAULT_PAGE_SIZE = 15;
 
 export default function PatientManagementPage() {
-	const { id: currentOrgId } = useCurrentOrg();
+	const { id: currentOrgId, name: currentOrgName } = useCurrentOrg();
 	const router = useRouter();
 
 	const searchParams = useSearchParams();
@@ -125,7 +133,7 @@ export default function PatientManagementPage() {
 	);
 	const table = useReactTable({
 		data: data?.data || [],
-		columns: getColumns(data?.data || []),
+		columns: getColumns(data?.data || [], currentOrgName),
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		pageCount: Math.ceil((data?.meta?.total || 0) / DEFAULT_PAGE_SIZE),
