@@ -5,6 +5,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ### Prerequisites
 
 -   Node.js version 20 or higher
+-   Create a `.env.local` file in the root directory by copying `.env.example`:
+    ```bash
+    cp .env.sample .env.local
+    ```
+    Then update the values in `.env.local` with your local configuration.
 
 First, run the development server:
 
